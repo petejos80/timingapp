@@ -11,54 +11,131 @@ var config = {
 
   firebase.initializeApp(config);
 
-  var database = firebase.database();
+  var dataRef = firebase.database();
 
   // 2. Button for adding Trains
   $("#add-train-button").on("click", function(event) {
   event.preventDefault();
   console.log("clicked");
 
-     // Grabs user input
-  var trainName = $("#train-name").val().trim();
-  var destination = $("#destination").val().trim();
-  var firstTrain = moment($("#first-train").val().trim(), "DD/MM/YY").format("X");
-  var frequency = $("#frequency").val().trim();
+ // Initial Values
+ var trainName = "";
+ var destination = "";
+ var firstTrain = 0;
+ var frequency = "";
 
-  // Creates local "temporary" object for holding train data
-  var newTrain = {
-    trainName: trainName,
-    destination: destination,
-    firstTrain: firstTrain,
-    frequency: frequency
-  };
+   // YOUR TASK!!!
+   // Code in the logic for storing and retrieving the most recent user.
+   // Don't forget to provide initial data to your Firebase database.
+   trainName = $("#train-name").val().trim();
+   destination = $("#destination").val().trim();
+   firstTrain = $("#first-train").val().trim();
+   frequency = $("#frequency").val().trim();
 
-  // Uploads train data to the database
-  database.ref().push(newTrain);
+   // Code for the push
+   dataRef.ref().push({
 
-  // Logs everything to console
-  console.log(newTrain.trainName);
-  console.log(newTrain.destination);
-  console.log(newTrain.firstTrain);
-  console.log(newTrain.frequency);
+     trainName: trainName,
+     destination: destination,
+     firstTrain: firstTrain,
+     frequency: frequency,
+     dateAdded: firebase.database.ServerValue.TIMESTAMP
+   });
+ });
 
-  // Alert
-  alert("Train successfully added");
+ // Firebase watcher + initial loader HINT: This code behaves similarly to .on("value")
+ dataRef.ref().on("child_added", function(childSnapshot) {
 
-  // Add each train's data into the table
-  $("#train-table > tbody").append("<tr><td>" + newTrain.trainName + "</td><td>" + newTrain.destination + "</td><td>" +
-  newTrain.firstTrain + "</td><td>" + newTrain.frequency + "</td><td>");
+   // Log everything that's coming out of snapshot
+   console.log(childSnapshot.val().trainName);
+   console.log(childSnapshot.val().destination);
+   console.log(childSnapshot.val().firstTrain);
+   console.log(childSnapshot.val().frequency);
 
-  // Clears all of the text-boxes
-  $("#train-name").val("");
-  $("#destination").val("");
-  $("#first-train").val("");
-  $("#frequency").val("");
-});
+   // full list of items to the well
+     $("#train-table > tbody").append("<tr><td>" + childSnapshot.val().trainName + "</td><td>" + childSnapshot.val().destination + "</td><td>" +
+     childSnapshot.val().firstTrain + "</td><td>" + childSnapshot.val().frequency + "</td><td>");
 
-$("#clear-all-button").on("click", function(event) {
-  $("#train-name").val("");
-  $("#destination").val("");
-  $("#first-train").val("");
-  $("#frequency").val("");
-});
+ // Handle the errors
+ }, function(errorObject) {
+   console.log("Errors handled: " + errorObject.code);
+ });
+
+ dataRef.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", function(snapshot) {
+
+   // Change the HTML to reflect
+   $("#train-name").text(snapshot.val().trainName);
+   $("#destination").text(snapshot.val().destination);
+   $("#first-train").text(snapshot.val().firstTrain);
+   $("#frequency").text(snapshot.val().frequency);
+ });
+
+
+
+
+// =====================================================================================================================
+
+
+
+
+
+//      // Grabs user input
+//   var trainName = $("#train-name").val().trim();
+//   var destination = $("#destination").val().trim();
+//   var firstTrain = moment($("#first-train").val().trim(), "DD/MM/YY").format("X");
+//   var frequency = $("#frequency").val().trim();
+
+//   // Creates local "temporary" object for holding train data
+//   var newTrain = {
+//     trainName: trainName,
+//     destination: destination,
+//     firstTrain: firstTrain,
+//     frequency: frequency
+//   };
+
+//   // Uploads train data to the database
+//   dataRef.ref().on("child_added", function(childSnapshot) {
+
+//     // Log everything that's coming out of snapshot
+//     console.log(childSnapshot.val().trainName);
+//     console.log(childSnapshot.val().destination);
+//     console.log(childSnapshot.val().firstTrain);
+//     console.log(childSnapshot.val().frequency);
+
+//   // Alert
+//   alert("Train successfully added");
+
+//   // Add each train's data into the table
+//   $("#train-table > tbody").append("<tr><td>" + newTrain.trainName + "</td><td>" + newTrain.destination + "</td><td>" +
+//   newTrain.firstTrain + "</td><td>" + newTrain.frequency + "</td><td>");
+
+// // Firebase watcher + initial loader HINT: This code behaves similarly to .on("value")
+// dataRef.ref().on("child_added", function(childSnapshot) {
+
+//     // Log everything that's coming out of snapshot
+//     console.log(childSnapshot.val().trainName);
+//     console.log(childSnapshot.val().destination);
+//     console.log(childSnapshot.val().firstTrain);
+//     console.log(childSnapshot.val().frequency);
+
+//     // full list of items to the well
+//     $("#full-member-list").append("<div class='well'><span class='member-name'> " + childSnapshot.val().name +
+//       " </span><span class='member-email'> " + childSnapshot.val().email +
+//       " </span><span class='member-age'> " + childSnapshot.val().age +
+//       " </span><span class='member-comment'> " + childSnapshot.val().comment + " </span></div>");
+
+
+//   // Clears all of the text-boxes
+//   $("#train-name").val("");
+//   $("#destination").val("");
+//   $("#first-train").val("");
+//   $("#frequency").val("");
+// });
+
+// $("#clear-all-button").on("click", function(event) {
+//   $("#train-name").val("");
+//   $("#destination").val("");
+//   $("#first-train").val("");
+//   $("#frequency").val("");
+// });
 
