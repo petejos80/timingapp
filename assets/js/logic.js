@@ -24,9 +24,7 @@ var config = {
  var firstTrain = 0;
  var frequency = "";
 
-   // YOUR TASK!!!
-   // Code in the logic for storing and retrieving the most recent user.
-   // Don't forget to provide initial data to your Firebase database.
+   // Retrive values from fields
    trainName = $("#train-name").val().trim();
    destination = $("#destination").val().trim();
    firstTrain = $("#first-train").val().trim();
@@ -35,13 +33,13 @@ var config = {
    // Code for the push
    dataRef.ref().push({
 
-     trainName: trainName,
-     destination: destination,
-     firstTrain: firstTrain,
-     frequency: frequency,
-     dateAdded: firebase.database.ServerValue.TIMESTAMP
-   });
- });
+    trainName: trainName,
+    destination: destination,
+    firstTrain: firstTrain,
+    frequency: frequency,
+    dateAdded: firebase.database.ServerValue.TIMESTAMP
+  });
+});
 
  // Firebase watcher + initial loader HINT: This code behaves similarly to .on("value")
  dataRef.ref().on("child_added", function(childSnapshot) {
@@ -54,7 +52,7 @@ var config = {
 
    // full list of items to the well
      $("#train-table > tbody").append("<tr><td>" + childSnapshot.val().trainName + "</td><td>" + childSnapshot.val().destination + "</td><td>" +
-     childSnapshot.val().firstTrain + "</td><td>" + childSnapshot.val().frequency + "</td><td>");
+     childSnapshot.val().frequency + "</td><td>");
 
  // Handle the errors
  }, function(errorObject) {
