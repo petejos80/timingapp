@@ -23,12 +23,41 @@ var config = {
  var destination = "";
  var firstTrain = 0;
  var frequency = "";
+ var tMinutesTillTrain = "";
+ var nextTrain = "";
 
-   // Retrive values from fields
-   trainName = $("#train-name").val().trim();
-   destination = $("#destination").val().trim();
-   firstTrain = $("#first-train").val().trim();
-   frequency = $("#frequency").val().trim();
+  // Retrive values from fields
+  trainName = $("#train-name").val().trim();
+  destination = $("#destination").val().trim();
+  firstTrain = $("#first-train").val().trim();
+  frequency = $("#frequency").val().trim();
+
+  // ADD FORECATING LOGIC
+  // Convert first time value to UNIX time
+  var firstTimeConverted = moment(firstTrain, "hh:mm").subtract(1, "years");
+  console.log("This is first time converted: " + firstTimeConverted);
+
+  // Current Time
+  var currentTime = moment();
+  console.log("CURRENT TIME: " + moment(currentTime).format("hh:mm"));
+
+  // Difference between the times
+  var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+  console.log("DIFFERENCE IN TIME: " + diffTime);
+
+  // Time apart (remainder)
+  var tRemainder = diffTime % frequency;
+  console.log("TIME APART (REMAINDER): " + tRemainder);
+
+  // Minute Until Train
+  var tMinutesTillTrain = frequency - tRemainder;
+  console.log("MINUTES TILL TRAIN: " + tMinutesTillTrain);
+
+  // Next Train
+  var trainArrival = moment().add(tMinutesTillTrain, "minutes");
+  var nextTrain = String(moment(trainArrival).format("hh:mm A"));
+
+  console.log("ARRIVAL TIME: " + moment(nextTrain).format("hh:mm"));
 
    // Code for the push
    dataRef.ref().push({
@@ -37,6 +66,8 @@ var config = {
     destination: destination,
     firstTrain: firstTrain,
     frequency: frequency,
+    tMinutesTillTrain: tMinutesTillTrain,
+    nextTrain: nextTrain,
     dateAdded: firebase.database.ServerValue.TIMESTAMP
   });
 });
@@ -44,15 +75,17 @@ var config = {
  // Firebase watcher + initial loader HINT: This code behaves similarly to .on("value")
  dataRef.ref().on("child_added", function(childSnapshot) {
 
-   // Log everything that's coming out of snapshot
-   console.log(childSnapshot.val().trainName);
-   console.log(childSnapshot.val().destination);
-   console.log(childSnapshot.val().firstTrain);
-   console.log(childSnapshot.val().frequency);
+ // Log everything that's coming out of snapshot
+  console.log(childSnapshot.val().trainName);
+  console.log(childSnapshot.val().destination);
+  console.log(childSnapshot.val().firstTrain);
+  console.log(childSnapshot.val().frequency);
+  console.log(childSnapshot.val().tMinutesTillTrain);
+  console.log(childSnapshot.val().nextTrain);
 
-   // full list of items to the well
-     $("#train-table > tbody").append("<tr><td>" + childSnapshot.val().trainName + "</td><td>" + childSnapshot.val().destination + "</td><td>" +
-     childSnapshot.val().frequency + "</td><td>");
+ // full list of items to the well
+  $("#train-table > tbody").append("<tr><td>" + childSnapshot.val().trainName + "</td><td>" + childSnapshot.val().destination + "</td><td>" +
+  childSnapshot.val().frequency + "</td><td>" + childSnapshot.val().nextTrain  + "</td><td>" + childSnapshot.val().tMinutesTillTrain  + "</td><td>");
 
  // Handle the errors
  }, function(errorObject) {
@@ -66,6 +99,8 @@ var config = {
    $("#destination").text(snapshot.val().destination);
    $("#first-train").text(snapshot.val().firstTrain);
    $("#frequency").text(snapshot.val().frequency);
+  //  $("#frequency").text(snapshot.val().tMinutesTillTrain);
+  //  $("#frequency").text(snapshot.val().nextTrain);
  });
 
 
