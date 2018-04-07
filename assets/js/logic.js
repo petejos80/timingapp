@@ -8,7 +8,7 @@ var config = {
   messagingSenderId: "437430008317"
 };
 
-// Global variables
+// Global variables 
 var trainName = "";
 var destination = "";
 var firstTrain = 0;
@@ -20,7 +20,7 @@ firebase.initializeApp(config);
 
 var dataRef = firebase.database();
 
-// 2. Button for adding Trains
+// 2. Button for adding Trains 
 $("#add-train-button").on("click", function(event) {
   event.preventDefault();
   console.log("clicked");
@@ -32,7 +32,7 @@ $("#add-train-button").on("click", function(event) {
     $("#frequency").val("");
 
 
-  // RETRIEVE VALUES FROM FORM FIELDS
+  // RETRIEVE VALUES FROM FORM FIELDS 
   // ========================================================
   trainName = $("#train-name").val().trim();
   destination = $("#destination").val().trim();
@@ -48,7 +48,7 @@ $("#add-train-button").on("click", function(event) {
   });
 
 
-// PUSH CONTENT TO FIREBASE
+// PUSH CONTENT TO FIREBASE 
 // ==================================================================================
 
 // Firebase watcher + initial loader HINT: This code behaves similarly to .on("value")
