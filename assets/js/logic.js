@@ -25,13 +25,6 @@ $("#add-train-button").on("click", function(event) {
   event.preventDefault();
   console.log("clicked");
 
-    // Clear values from fields
-    $("#train-name").val("");
-    $("#destination").val("");
-    $("#first-train").val("");
-    $("#frequency").val("");
-
-
   // RETRIEVE VALUES FROM FORM FIELDS 
   // ========================================================
   trainName = $("#train-name").val().trim();
@@ -45,6 +38,12 @@ $("#add-train-button").on("click", function(event) {
       firstTrain: firstTrain,
       frequency: frequency,
     });
+
+    // Clear values from fields
+    $("#train-name").val("");
+    $("#destination").val("");
+    $("#first-train").val("");
+    $("#frequency").val("");
   });
 
 
